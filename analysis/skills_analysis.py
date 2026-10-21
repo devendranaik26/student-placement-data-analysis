@@ -1,6 +1,6 @@
 
 import pandas as pd
-from database import get_connection
+from .database import get_connection
 
 
 def analyze_skills():

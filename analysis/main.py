@@ -1,8 +1,8 @@
 
-from department_analysis import analyze_departments
-from package_analysis import analyze_packages
-from company_analysis import analyze_companies
-from skills_analysis import analyze_skills
+from .department_analysis import analyze_departments
+from .package_analysis import analyze_packages
+from .company_analysis import analyze_companies
+from .skills_analysis import analyze_skills
 
 
 def main():

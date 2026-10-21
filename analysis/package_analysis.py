@@ -1,7 +1,7 @@
 
 import pandas as pd
 import numpy as np
-from database import get_connection
+from .database import get_connection
 
 
 def analyze_packages():
