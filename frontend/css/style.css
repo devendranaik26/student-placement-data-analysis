@@ -1,0 +1,443 @@
+
+/* ===== General styles ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --navy: #101b35;
+    --blue: #3563e9;
+    --cyan: #06b6d4;
+    --background: #f3f6fc;
+    --white: #ffffff;
+    --text: #172554;
+    --muted: #718096;
+    --border: #e5eaf3;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+}
+
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+    width: 255px;
+    background: var(--navy);
+    color: white;
+    padding: 30px 18px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.brand {
+    padding: 0 10px 35px;
+}
+
+.brand h2 {
+    font-size: 22px;
+    letter-spacing: -0.5px;
+}
+
+.brand h2 span {
+    display: block;
+    color: #67e8f9;
+}
+
+.brand p {
+    margin-top: 8px;
+    color: #a8b8d8;
+    font-size: 13px;
+}
+
+.navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.nav-link {
+    display: block;
+    text-decoration: none;
+    color: #c5d0e6;
+    padding: 14px 13px;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: #253657;
+    color: white;
+}
+
+.nav-link.active {
+    border-left: 3px solid #67e8f9;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 30px 10px 0;
+    color: #91a1c1;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* ===== Main content ===== */
+.main-content {
+    flex: 1;
+    min-width: 0;
+    padding: 35px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.eyebrow {
+    color: var(--blue);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    margin-bottom: 10px;
+}
+
+.page-header h1 {
+    font-size: clamp(25px, 3vw, 34px);
+    margin-bottom: 9px;
+}
+
+.subtitle,
+.section-heading p,
+.chart-card > p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.year-badge {
+    background: #e0eaff;
+    color: #2449b8;
+    padding: 11px 15px;
+    border-radius: 10px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+/* ===== Summary cards ===== */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 35px;
+}
+
+.summary-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 23px 20px;
+    box-shadow: 0 4px 15px rgba(25, 45, 90, 0.035);
+    border-top: 4px solid var(--blue);
+}
+
+.summary-card:nth-child(2) {
+    border-top-color: #0d9488;
+}
+
+.summary-card:nth-child(3) {
+    border-top-color: #8b5cf6;
+}
+
+.summary-card:nth-child(4) {
+    border-top-color: #f59e0b;
+}
+
+.summary-card p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.summary-card h2 {
+    font-size: 29px;
+    margin-bottom: 10px;
+    overflow-wrap: anywhere;
+}
+
+.summary-card span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* ===== Chart section ===== */
+.section {
+    margin-bottom: 30px;
+}
+
+.section-heading {
+    margin-bottom: 20px;
+}
+
+.section-heading h2 {
+    font-size: 22px;
+    margin-bottom: 7px;
+}
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.chart-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 15px rgba(25, 45, 90, 0.035);
+    min-width: 0;
+}
+
+.chart-card h3 {
+    font-size: 17px;
+    margin-bottom: 7px;
+}
+
+.chart-card img {
+    display: block;
+    width: 100%;
+    height: 290px;
+    object-fit: contain;
+    margin-top: 18px;
+}
+
+.page-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* ===== Tablet ===== */
+@media (max-width: 1100px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .main-content {
+        padding: 25px;
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ===== Mobile ===== */
+@media (max-width: 700px) {
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .brand {
+        padding-bottom: 18px;
+    }
+
+    .navigation {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .nav-link {
+        font-size: 12px;
+        padding: 12px 9px;
+    }
+
+    .sidebar-footer {
+        display: none;
+    }
+
+    .main-content {
+        padding: 20px 15px;
+    }
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .summary-grid,
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .summary-card {
+        padding: 20px;
+    }
+
+    .chart-card {
+        padding: 18px;
+    }
+
+    .chart-card img {
+        height: 250px;
+    }
+}
+
+
+/* Department summary cards: larger and bolder text */
+
+/* Summary card headings */
+.summary-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #172554;
+}
+
+/* Summary card values */
+.summary-card p {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.3;
+    color: #0f172a;
+    margin-bottom: 0;
+}
+
+
+/* ===== Page Load Animations ===== */
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(22px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fade in the page */
+body {
+    animation: pageFadeIn 0.7s ease-out both;
+}
+
+/* Sidebar enters from the left */
+.sidebar {
+    animation: slideInLeft 0.7s ease-out both;
+}
+
+/* Main content enters gently */
+.main-content {
+    animation: slideInUp 0.7s ease-out both;
+}
+
+/* Summary cards appear one after another */
+.summary-card {
+    animation: slideInUp 0.6s ease-out both;
+}
+
+.summary-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.summary-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.summary-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.summary-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+/* Chart panels appear after the summary cards */
+.chart-card {
+    animation: slideInUp 0.7s ease-out both;
+}
+
+.chart-card:nth-child(1) {
+    animation-delay: 0.25s;
+}
+
+.chart-card:nth-child(2) {
+    animation-delay: 0.4s;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    body,
+    .sidebar,
+    .main-content,
+    .summary-card,
+    .chart-card {
+        animation: none;
+    }
+}
+
+/* Normal size for animated dashboard pie charts */
+#placementStatusChart,
+#companyDistributionChart {
+    display: block;
+    width: 100% !important;
+    max-width: 300px;
+    max-height: 300px;
+    margin: 15px auto;
+}
+
+/* Animated department chart sizing */
+.animated-chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    max-width: 650px;
+    margin: 18px auto;
+}
+
+.animated-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}

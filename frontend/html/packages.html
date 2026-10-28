@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package Analysis - Placement Insights</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <h2>Placement<span>Insights</span></h2>
+                <p>Student Analytics</p>
+            </div>
+
+            <nav class="navigation">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="departments.html" class="nav-link">Department Analysis</a>
+                <a href="packages.html" class="nav-link active">Package Analysis</a>
+                <a href="companies.html" class="nav-link">Company Analysis</a>
+                <a href="skills.html" class="nav-link">Skills Analysis</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                Student Placement Data Analysis System
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content">
+
+            <header class="page-header">
+                <div>
+                    <p class="eyebrow">PLACEMENT ANALYTICS</p>
+                    <h1>Package Analysis</h1>
+                    <p class="subtitle">
+                        Explore salary packages and compare department averages.
+                    </p>
+                </div>
+                <div class="year-badge">Graduation Year: 2029</div>
+            </header>
+
+            <!-- Package Summary -->
+            <section class="summary-grid">
+                <div class="summary-card">
+                    <h3>Package Records</h3>
+                    <p id="package-records">--</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Average Package</h3>
+                    <p id="average-package">--</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Highest Package</h3>
+                    <p id="highest-package">--</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Lowest Package</h3>
+                    <p id="lowest-package">--</p>
+                </div>
+            </section>
+
+            <!-- Package Charts -->
+            <section class="section">
+                <div class="section-heading">
+                    <div>
+                        <h2>Package Insights</h2>
+                        <p>Understand salary distribution and department averages.</p>
+                    </div>
+                </div>
+
+                <div class="chart-grid">
+                    <article class="chart-card">
+                        <h3>Average Package by Department</h3>
+                        <p>Compare average placement packages in LPA.</p>
+                        <div class="animated-chart-container">
+                            <canvas id="averagePackageDepartmentChart"></canvas>
+                        </div>
+                    </article>
+
+                    <article class="chart-card">
+                        <h3>Package Distribution</h3>
+                        <p>Explore the distribution of placement packages in LPA.</p>
+                        <div class="animated-chart-container">
+                            <canvas id="packageDistributionChart"></canvas>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <footer class="page-footer">
+                Student Placement Data Analysis System
+            </footer>
+
+        </main>
+    </div>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>

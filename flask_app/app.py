@@ -1,3 +1,5 @@
+from flask_cors import CORS
+
 from flask import send_from_directory
 from pathlib import Path
 
@@ -12,6 +14,7 @@ from flask import Flask, jsonify
 from analysis.department_analysis import analyze_departments
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "http://127.0.0.1:8000"}})
 
 
 @app.route("/")

@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Analysis | Student Placement System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="app-container">
+
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Placement Analysis</h2>
+                <p>Student Placement System</p>
+            </div>
+
+            <nav class="navigation">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="departments.html" class="nav-link">Department Analysis</a>
+                <a href="packages.html" class="nav-link">Package Analysis</a>
+                <a href="companies.html" class="nav-link">Company Analysis</a>
+                <a href="skills.html" class="nav-link active">Skills Analysis</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="page-header">
+                <div>
+                    <h1>Skills Analysis</h1>
+                    <p>Explore the skills recorded in the student placement dataset.</p>
+                </div>
+                <span>Graduation Year: 2029</span>
+            </header>
+
+            <section class="summary-grid">
+                <div class="summary-card">
+                    <h3>Total Skills</h3>
+                    <p id="total-skills">--</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Students with Skills</h3>
+                    <p id="students-with-skills">--</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Top Skill</h3>
+                    <p id="top-skill">--</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Top Skill Placement Rate</h3>
+                    <p id="top-skill-placement-rate">--</p>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-heading">
+                    <h2>Top Demand Skills</h2>
+                    <p>Compare the number of students associated with each skill.</p>
+                </div>
+
+                <div class="chart-grid">
+                    <div class="chart-card">
+                        <h3>Skill Demand Chart</h3>
+
+                        <div class="animated-chart-container">
+                            <canvas id="skillsDemandChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="page-footer">
+                <p>Student Placement Data Analysis System | 2029</p>
+            </footer>
+        </main>
+
+    </div>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>
