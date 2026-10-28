@@ -1,86 +1,108 @@
 
-import matplotlib
-matplotlib.use("Agg")
-
 import matplotlib.pyplot as plt
-import pandas as pd
-
 from pathlib import Path
-from analysis.database import get_connection
+
+from analysis.company_analysis import analyze_companies
 
 
-CHART_DIR = Path(__file__).parent / "charts"
-CHART_DIR.mkdir(parents=True, exist_ok=True)
+# Output folder
+OUTPUT_DIR = Path("visualization/charts")
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def get_company_data():
-    """Retrieve the number of distinct students hired by each company."""
+# Modern blue and cyan dashboard theme
+BACKGROUND_COLOR = "#F8FAFC"
+TEXT_COLOR = "#0F172A"
+GRID_COLOR = "#E2E8F0"
 
-    connection = get_connection()
+COMPANY_COLORS = [
+    "#2563EB",  # Blue
+    "#06B6D4",  # Cyan
+    "#0D9488",  # Teal
+    "#38BDF8",  # Sky blue
+    "#6366F1",  # Indigo
+    "#14B8A6",  # Turquoise
+    "#3B82F6",  # Bright blue
+    "#0891B2",  # Deep cyan
+    "#818CF8",  # Soft indigo
+    "#67E8F9",  # Light cyan
+]
 
-    if connection is None:
-        print("Database unavailable. Cannot create company chart.")
-        return None
 
-    try:
-        query = """
-        SELECT
-            p.company,
-            COUNT(DISTINCT p.student_id) AS students_hired
-        FROM placements p
-        WHERE p.company IS NOT NULL
-          AND p.company <> ''
-        GROUP BY p.company
-        ORDER BY students_hired DESC
-        """
+def style_axis(ax):
+    """Apply consistent dashboard styling."""
+    ax.set_facecolor(BACKGROUND_COLOR)
+    ax.grid(axis="y", linestyle="--", alpha=0.8, color=GRID_COLOR)
+    ax.set_axisbelow(True)
 
-        df = pd.read_sql(query, connection)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color(GRID_COLOR)
+    ax.spines["bottom"].set_color(GRID_COLOR)
 
-        if df.empty:
-            print("No company placement data available.")
-            return None
+    ax.tick_params(axis="x", colors=TEXT_COLOR)
+    ax.tick_params(axis="y", colors=TEXT_COLOR)
 
-        return df
-
-    except Exception as error:
-        print(f"Could not retrieve company data: {error}")
-        return None
-
-    finally:
-        connection.close()
+    ax.title.set_color(TEXT_COLOR)
+    ax.xaxis.label.set_color(TEXT_COLOR)
+    ax.yaxis.label.set_color(TEXT_COLOR)
 
 
 def plot_company_placements():
-    """Create a chart showing students hired by each company."""
-
-    df = get_company_data()
+    """Create a chart of students placed by company."""
+    df = analyze_companies()
 
     if df is None or df.empty:
+        print("No company placement data available.")
         return
 
-    # Display the top 10 companies to keep the chart readable.
-    df = df.head(10).sort_values("students_hired")
+    df = df.sort_values("students_placed", ascending=False).head(10)
 
-    plt.figure(figsize=(10, 6))
+    colors = [
+        COMPANY_COLORS[i % len(COMPANY_COLORS)]
+        for i in range(len(df))
+    ]
 
-    plt.barh(
+    fig, ax = plt.subplots(figsize=(10, 6))
+    fig.patch.set_facecolor(BACKGROUND_COLOR)
+
+    bars = ax.bar(
         df["company"].astype(str),
-        df["students_hired"]
+        df["students_placed"],
+        color=colors,
+        edgecolor="#1D4ED8",
+        linewidth=0.8,
+        width=0.65
     )
 
-    plt.title("Top Companies by Number of Students Hired")
-    plt.xlabel("Number of Students Hired")
-    plt.ylabel("Company")
+    ax.set_title(
+        "Company-wise Student Placements",
+        fontsize=16,
+        fontweight="bold",
+        pad=18
+    )
+    ax.set_xlabel("Company", fontsize=11, labelpad=10)
+    ax.set_ylabel("Number of Students Placed", fontsize=11, labelpad=10)
 
+    style_axis(ax)
+
+    ax.bar_label(bars, padding=4, fontsize=10, color=TEXT_COLOR)
+    ax.margins(y=0.15)
+
+    plt.xticks(rotation=25, ha="right")
     plt.tight_layout()
 
-    output = CHART_DIR / "company_placements.png"
-    plt.savefig(output, dpi=300, bbox_inches="tight")
-    plt.close()
+    output_path = OUTPUT_DIR / "company_placements.png"
+    plt.savefig(
+        output_path,
+        dpi=300,
+        bbox_inches="tight",
+        facecolor=fig.get_facecolor()
+    )
+    plt.close(fig)
 
-    print(f"Saved: {output}")
+    print(f"Company placement chart saved to: {output_path}")
 
 
 if __name__ == "__main__":
     plot_company_placements()
-
