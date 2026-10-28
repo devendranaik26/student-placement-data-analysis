@@ -1,4 +1,4 @@
-
+```css
 /* ===== General styles ===== */
 * {
     margin: 0;
@@ -21,6 +21,7 @@ body {
     font-family: "Segoe UI", Arial, sans-serif;
     background: var(--background);
     color: var(--text);
+    animation: pageFadeIn 0.7s ease-out both;
 }
 
 .app-container {
@@ -37,6 +38,7 @@ body {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
+    animation: slideInLeft 0.7s ease-out both;
 }
 
 .brand {
@@ -98,6 +100,7 @@ body {
     flex: 1;
     min-width: 0;
     padding: 35px;
+    animation: slideInUp 0.7s ease-out both;
 }
 
 .page-header {
@@ -139,20 +142,23 @@ body {
 }
 
 /* ===== Summary cards ===== */
+/* Five cards in one row on desktop */
 .summary-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 35px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 30px;
 }
 
 .summary-card {
     background: var(--white);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 23px 20px;
-    box-shadow: 0 4px 15px rgba(25, 45, 90, 0.035);
     border-top: 4px solid var(--blue);
+    border-radius: 12px;
+    padding: 18px 14px;
+    min-width: 0;
+    box-shadow: 0 4px 15px rgba(25, 45, 90, 0.035);
+    animation: slideInUp 0.6s ease-out both;
 }
 
 .summary-card:nth-child(2) {
@@ -167,21 +173,61 @@ body {
     border-top-color: #f59e0b;
 }
 
+.summary-card:nth-child(5) {
+    border-top-color: #06b6d4;
+}
+
 .summary-card p {
     color: var(--muted);
-    font-size: 13px;
-    margin-bottom: 15px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 10px;
 }
 
 .summary-card h2 {
-    font-size: 29px;
-    margin-bottom: 10px;
+    color: #0f172a;
+    font-size: clamp(18px, 1.7vw, 25px);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
     overflow-wrap: anywhere;
 }
 
 .summary-card span {
+    display: block;
     color: var(--muted);
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* Staggered card animations */
+.summary-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.summary-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.summary-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.summary-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.summary-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+/* Department summary headings, if used */
+.summary-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #172554;
 }
 
 /* ===== Chart section ===== */
@@ -211,6 +257,7 @@ body {
     padding: 24px;
     box-shadow: 0 4px 15px rgba(25, 45, 90, 0.035);
     min-width: 0;
+    animation: slideInUp 0.7s ease-out both;
 }
 
 .chart-card h3 {
@@ -226,11 +273,43 @@ body {
     margin-top: 18px;
 }
 
+.chart-card:nth-child(1) {
+    animation-delay: 0.25s;
+}
+
+.chart-card:nth-child(2) {
+    animation-delay: 0.4s;
+}
+
 .page-footer {
     border-top: 1px solid var(--border);
     padding-top: 20px;
     color: var(--muted);
     font-size: 12px;
+}
+
+/* ===== Dashboard pie chart sizing ===== */
+#placementStatusChart,
+#companyDistributionChart {
+    display: block;
+    width: 100% !important;
+    max-width: 300px;
+    max-height: 300px;
+    margin: 15px auto;
+}
+
+/* ===== Animated department chart sizing ===== */
+.animated-chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    max-width: 650px;
+    margin: 18px auto;
+}
+
+.animated-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* ===== Tablet ===== */
@@ -244,11 +323,11 @@ body {
     }
 
     .summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
-/* ===== Mobile ===== */
+/* ===== Mobile and smaller screens ===== */
 @media (max-width: 700px) {
     .app-container {
         flex-direction: column;
@@ -286,13 +365,22 @@ body {
         flex-direction: column;
     }
 
-    .summary-grid,
-    .chart-grid {
-        grid-template-columns: 1fr;
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
     }
 
     .summary-card {
-        padding: 20px;
+        padding: 16px 12px;
+    }
+
+    .summary-card h2 {
+        font-size: 21px;
+    }
+
+    .chart-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
 
     .chart-card {
@@ -304,29 +392,14 @@ body {
     }
 }
 
-
-/* Department summary cards: larger and bolder text */
-
-/* Summary card headings */
-.summary-card h3 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: #172554;
+/* ===== Small mobile screens ===== */
+@media (max-width: 380px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-/* Summary card values */
-.summary-card p {
-    font-size: 32px;
-    font-weight: 800;
-    line-height: 1.3;
-    color: #0f172a;
-    margin-bottom: 0;
-}
-
-
-/* ===== Page Load Animations ===== */
-
+/* ===== Page load animations ===== */
 @keyframes pageFadeIn {
     from {
         opacity: 0;
@@ -358,56 +431,7 @@ body {
     }
 }
 
-/* Fade in the page */
-body {
-    animation: pageFadeIn 0.7s ease-out both;
-}
-
-/* Sidebar enters from the left */
-.sidebar {
-    animation: slideInLeft 0.7s ease-out both;
-}
-
-/* Main content enters gently */
-.main-content {
-    animation: slideInUp 0.7s ease-out both;
-}
-
-/* Summary cards appear one after another */
-.summary-card {
-    animation: slideInUp 0.6s ease-out both;
-}
-
-.summary-card:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.summary-card:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.summary-card:nth-child(3) {
-    animation-delay: 0.3s;
-}
-
-.summary-card:nth-child(4) {
-    animation-delay: 0.4s;
-}
-
-/* Chart panels appear after the summary cards */
-.chart-card {
-    animation: slideInUp 0.7s ease-out both;
-}
-
-.chart-card:nth-child(1) {
-    animation-delay: 0.25s;
-}
-
-.chart-card:nth-child(2) {
-    animation-delay: 0.4s;
-}
-
-/* Respect users who prefer reduced motion */
+/* ===== Respect reduced-motion preferences ===== */
 @media (prefers-reduced-motion: reduce) {
     body,
     .sidebar,
@@ -417,27 +441,4 @@ body {
         animation: none;
     }
 }
-
-/* Normal size for animated dashboard pie charts */
-#placementStatusChart,
-#companyDistributionChart {
-    display: block;
-    width: 100% !important;
-    max-width: 300px;
-    max-height: 300px;
-    margin: 15px auto;
-}
-
-/* Animated department chart sizing */
-.animated-chart-container {
-    position: relative;
-    width: 100%;
-    height: 300px;
-    max-width: 650px;
-    margin: 18px auto;
-}
-
-.animated-chart-container canvas {
-    width: 100% !important;
-    height: 100% !important;
-}
+```

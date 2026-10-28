@@ -1,0 +1,615 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <link rel="stylesheet" href="../css/style.css">
+
+    <style>
+        /* Student page layout */
+        .student-container {
+            flex: 1;
+            min-width: 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 35px;
+        }
+
+        /* Summary cards */
+        .student-summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-card h3 {
+            margin: 0 0 12px;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .summary-card p {
+            margin: 0;
+            color: #0f172a;
+            font-size: 30px;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        /* Student form */
+        .student-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .student-form input,
+        .student-form select,
+        .student-form button {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .student-form button {
+            cursor: pointer;
+            border: none;
+            background: #2563eb;
+            color: white;
+        }
+
+        .student-form button:hover {
+            background: #1d4ed8;
+        }
+
+        .cancel-button {
+            background: #64748b !important;
+        }
+
+        /* Search and department filter */
+        .student-search {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .student-search input,
+        .student-search select {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .student-search input {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .student-search select {
+            min-width: 180px;
+            background: white;
+        }
+
+        /* Student table */
+        .student-table-wrapper {
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .student-table th,
+        .student-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .student-table th {
+            background: #eef2ff;
+        }
+
+        .student-table button {
+            padding: 7px 10px;
+            margin: 3px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .edit-button {
+            background: #facc15;
+        }
+
+        .delete-button {
+            background: #dc2626;
+            color: white;
+        }
+
+        /* Messages and record count */
+        #studentMessage {
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .student-count {
+            margin-bottom: 15px;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 1000px) {
+            .student-summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .student-container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .student-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- Sidebar navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <h2>Placement <span>Analytics</span></h2>
+                <p>Student Placement Data Analysis System</p>
+            </div>
+
+            <nav class="navigation">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="departments.html" class="nav-link">Department Analysis</a>
+                <a href="packages.html" class="nav-link">Package Analysis</a>
+                <a href="companies.html" class="nav-link">Company Analysis</a>
+                <a href="skills.html" class="nav-link">Skills Analysis</a>
+                <a href="students.html" class="nav-link active">Student Management</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                Student Placement Data Analysis System
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content student-container">
+
+            <h1>Student Management</h1>
+            <p>Add, view, edit, and delete student records.</p>
+
+            <!-- Summary cards -->
+            <div class="student-summary">
+                <div class="summary-card">
+                    <h3>Total Students</h3>
+                    <p id="totalStudents">0</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Departments</h3>
+                    <p id="totalDepartments">0</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Graduation Year</h3>
+                    <p id="graduationYearSummary">—</p>
+                </div>
+
+                <div class="summary-card">
+                    <h3>Filtered Results</h3>
+                    <p id="filteredStudentsCount">0</p>
+                </div>
+            </div>
+
+            <p id="studentMessage" role="status" aria-live="polite"></p>
+
+            <!-- Add and edit student form -->
+            <h2 id="formTitle">Add New Student</h2>
+
+            <form id="studentForm" class="student-form">
+                <input
+                    type="text"
+                    id="rollNo"
+                    placeholder="Roll Number (e.g. CSE021)"
+                    maxlength="20"
+                    required
+                >
+
+                <select id="department" required>
+                    <option value="">Select Department</option>
+                    <option value="CSE">CSE</option>
+                    <option value="AIML">AIML</option>
+                    <option value="AIDS">AIDS</option>
+                    <option value="ECE">ECE</option>
+                    <option value="IT">IT</option>
+                </select>
+
+                <input
+                    type="number"
+                    id="graduationYear"
+                    placeholder="Graduation Year"
+                    min="1900"
+                    max="2100"
+                    value="2029"
+                    required
+                >
+
+                <button type="submit" id="submitButton">
+                    Add Student
+                </button>
+
+                <button
+                    type="button"
+                    id="cancelButton"
+                    class="cancel-button"
+                    hidden
+                >
+                    Cancel Edit
+                </button>
+            </form>
+
+            <!-- Student records and filters -->
+            <h2>Student Records</h2>
+
+            <div class="student-search">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by roll number..."
+                    aria-label="Search by roll number"
+                >
+
+                <select id="departmentFilter" aria-label="Filter by department">
+                    <option value="">All Departments</option>
+                    <option value="CSE">CSE</option>
+                    <option value="AIML">AIML</option>
+                    <option value="AIDS">AIDS</option>
+                    <option value="ECE">ECE</option>
+                    <option value="IT">IT</option>
+                </select>
+            </div>
+
+            <p id="studentCount" class="student-count">
+                Loading students...
+            </p>
+
+            <div class="student-table-wrapper">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Roll Number</th>
+                            <th>Department</th>
+                            <th>Graduation Year</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentTableBody">
+                        <tr>
+                            <td colspan="5">Loading student records...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000/api/students";
+
+        const studentForm = document.getElementById("studentForm");
+        const rollNoInput = document.getElementById("rollNo");
+        const departmentInput = document.getElementById("department");
+        const graduationYearInput = document.getElementById("graduationYear");
+
+        const tableBody = document.getElementById("studentTableBody");
+        const message = document.getElementById("studentMessage");
+        const studentCount = document.getElementById("studentCount");
+
+        const totalStudentsCard = document.getElementById("totalStudents");
+        const totalDepartmentsCard = document.getElementById("totalDepartments");
+        const graduationYearCard = document.getElementById("graduationYearSummary");
+        const filteredStudentsCard = document.getElementById("filteredStudentsCount");
+
+        const searchInput = document.getElementById("searchInput");
+        const departmentFilter = document.getElementById("departmentFilter");
+
+        const formTitle = document.getElementById("formTitle");
+        const submitButton = document.getElementById("submitButton");
+        const cancelButton = document.getElementById("cancelButton");
+
+        let editingStudentId = null;
+        let students = [];
+
+        function showMessage(text, isError = false) {
+            message.textContent = text;
+            message.style.color = isError ? "#dc2626" : "#15803d";
+        }
+
+        async function loadStudents() {
+            try {
+                const response = await fetch(API_URL);
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(
+                        result.error || "Could not load students."
+                    );
+                }
+
+                students = result.data;
+                renderStudents();
+
+            } catch (error) {
+                studentCount.textContent =
+                    "Unable to load student records.";
+
+                tableBody.replaceChildren();
+
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+
+                cell.colSpan = 5;
+                cell.textContent = error.message;
+
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+
+                showMessage(error.message, true);
+            }
+        }
+
+        function renderStudents() {
+            tableBody.replaceChildren();
+
+            const searchText =
+                searchInput.value.trim().toLowerCase();
+
+            const selectedDepartment = departmentFilter.value;
+
+            // Apply search and department filters
+            const filteredStudents = students.filter(student =>
+                String(student.roll_no)
+                    .toLowerCase()
+                    .includes(searchText) &&
+                (
+                    selectedDepartment === "" ||
+                    student.department === selectedDepartment
+                )
+            );
+
+            // Calculate summary values from all student records
+            const departments = new Set(
+                students.map(student => student.department)
+            );
+
+            const graduationYears = new Set(
+                students.map(student => student.graduation_year)
+            );
+
+            totalStudentsCard.textContent = students.length;
+
+            totalDepartmentsCard.textContent = departments.size;
+
+            graduationYearCard.textContent =
+                graduationYears.size === 0
+                    ? "—"
+                    : [...graduationYears]
+                        .sort((a, b) => Number(a) - Number(b))
+                        .join(", ");
+
+            filteredStudentsCard.textContent =
+                filteredStudents.length;
+
+            studentCount.textContent =
+                `Showing ${filteredStudents.length} of ${students.length} students`;
+
+            if (filteredStudents.length === 0) {
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+
+                cell.colSpan = 5;
+                cell.textContent = "No matching students found.";
+
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+
+                return;
+            }
+
+            // Display matching student records
+            filteredStudents.forEach(student => {
+                const row = document.createElement("tr");
+
+                [
+                    student.student_id,
+                    student.roll_no,
+                    student.department,
+                    student.graduation_year
+                ].forEach(value => {
+                    const cell = document.createElement("td");
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
+
+                const actionsCell = document.createElement("td");
+
+                const editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.className = "edit-button";
+                editButton.type = "button";
+
+                editButton.addEventListener("click", () => {
+                    editStudent(student);
+                });
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.className = "delete-button";
+                deleteButton.type = "button";
+
+                deleteButton.addEventListener("click", () => {
+                    deleteStudent(student);
+                });
+
+                actionsCell.append(editButton, deleteButton);
+                row.appendChild(actionsCell);
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Update results when search or department changes
+        searchInput.addEventListener("input", renderStudents);
+
+        departmentFilter.addEventListener("change", renderStudents);
+
+        // Add or update a student
+        studentForm.addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const studentData = {
+                roll_no: rollNoInput.value.trim(),
+                department: departmentInput.value,
+                graduation_year: Number(graduationYearInput.value)
+            };
+
+            const isEditing = editingStudentId !== null;
+
+            const url = isEditing
+                ? `${API_URL}/${editingStudentId}`
+                : API_URL;
+
+            try {
+                const response = await fetch(url, {
+                    method: isEditing ? "PUT" : "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(studentData)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(
+                        result.error || "Unable to save student."
+                    );
+                }
+
+                showMessage(
+                    result.message || "Student saved successfully."
+                );
+
+                resetForm();
+                await loadStudents();
+
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        });
+
+        // Load a student into the form for editing
+        function editStudent(student) {
+            editingStudentId = student.student_id;
+
+            rollNoInput.value = student.roll_no;
+            departmentInput.value = student.department;
+            graduationYearInput.value = student.graduation_year;
+
+            formTitle.textContent = "Edit Student";
+            submitButton.textContent = "Save Changes";
+            cancelButton.hidden = false;
+
+            studentForm.scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+
+        // Delete a student
+        async function deleteStudent(student) {
+            const confirmed = confirm(
+                `Delete student ${student.roll_no}?\nThis cannot be undone.`
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `${API_URL}/${student.student_id}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(
+                        result.error || "Unable to delete student."
+                    );
+                }
+
+                showMessage(result.message);
+                await loadStudents();
+
+            } catch (error) {
+                showMessage(error.message, true);
+            }
+        }
+
+        // Reset the form
+        function resetForm() {
+            editingStudentId = null;
+
+            studentForm.reset();
+            graduationYearInput.value = 2029;
+
+            formTitle.textContent = "Add New Student";
+            submitButton.textContent = "Add Student";
+            cancelButton.hidden = true;
+        }
+
+        cancelButton.addEventListener("click", resetForm);
+
+        // Load records when the page opens
+        loadStudents();
+    </script>
+</body>
+</html>

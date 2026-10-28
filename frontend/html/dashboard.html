@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,6 +24,7 @@
                 <a href="packages.html" class="nav-link">Package Analysis</a>
                 <a href="companies.html" class="nav-link">Company Analysis</a>
                 <a href="skills.html" class="nav-link">Skills Analysis</a>
+                <a href="students.html" class="nav-link">Student Management</a>
             </nav>
 
             <div class="sidebar-footer">
@@ -41,11 +43,13 @@
                         Explore student placement performance and insights.
                     </p>
                 </div>
+
                 <div class="year-badge">Graduation Year: 2029</div>
             </header>
 
             <!-- Summary Cards -->
             <section class="summary-grid">
+
                 <article class="summary-card">
                     <p>Total Students</p>
                     <h2 id="total-students">--</h2>
@@ -69,6 +73,13 @@
                     <h2 id="unplaced-students">--</h2>
                     <span>Students not placed</span>
                 </article>
+
+                <article class="summary-card">
+                    <p>Average Package</p>
+                    <h2 id="dashboard-average-package">--</h2>
+                    <span>Average package across placement records</span>
+                </article>
+
             </section>
 
             <!-- Dashboard Charts -->
@@ -81,6 +92,7 @@
                 </div>
 
                 <div class="chart-grid">
+
                     <article class="chart-card">
                         <h3>Placement Status</h3>
                         <p>Placed vs. not-yet-placed students</p>
@@ -92,6 +104,7 @@
                         <p>Placement distribution across companies</p>
                         <canvas id="companyDistributionChart"></canvas>
                     </article>
+
                 </div>
             </section>
 
@@ -105,3 +118,4 @@
     <script src="../js/script.js"></script>
 </body>
 </html>
+```

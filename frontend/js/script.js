@@ -139,6 +139,43 @@ async function loadDashboardSummary() {
         }
 
         const departments = result.data;
+        
+const packageResponse = await fetch(`${API_BASE}/api/packages`);
+
+if (!packageResponse.ok) {
+    throw new Error("Could not load package data.");
+}
+
+const packageResult = await packageResponse.json();
+
+if (
+    !packageResult.success ||
+    !Array.isArray(packageResult.data)
+) {
+    throw new Error("Invalid package data received.");
+}
+
+const packageValues = packageResult.data
+    .map(item => Number(item.package_lpa))
+    .filter(value => Number.isFinite(value) && value > 0);
+
+const averagePackageElement = document.getElementById(
+    "dashboard-average-package"
+);
+
+if (averagePackageElement) {
+    if (packageValues.length > 0) {
+        const averagePackage =
+            packageValues.reduce((sum, value) => sum + value, 0)
+            / packageValues.length;
+
+        averagePackageElement.textContent =
+            `${averagePackage.toFixed(2)} LPA`;
+    } else {
+        averagePackageElement.textContent = "N/A";
+    }
+}
+
 
         const totalStudents = departments.reduce(
             (sum, dept) => sum + Number(dept.total_students || 0), 0
