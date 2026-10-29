@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="../css/style.css">
 
     <style>
-        /* Student page layout */
         .student-container {
             flex: 1;
             min-width: 0;
@@ -17,7 +16,6 @@
             padding: 35px;
         }
 
-        /* Summary cards */
         .student-summary {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -48,7 +46,6 @@
             overflow-wrap: anywhere;
         }
 
-        /* Student form */
         .student-form {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -83,7 +80,6 @@
             background: #64748b !important;
         }
 
-        /* Search and department filter */
         .student-search {
             display: flex;
             flex-wrap: wrap;
@@ -109,7 +105,6 @@
             background: white;
         }
 
-        /* Student table */
         .student-table-wrapper {
             overflow-x: auto;
             background: white;
@@ -150,7 +145,6 @@
             color: white;
         }
 
-        /* Messages and record count */
         #studentMessage {
             margin: 15px 0;
             font-weight: bold;
@@ -160,7 +154,6 @@
             margin-bottom: 15px;
         }
 
-        /* Responsive layout */
         @media (max-width: 1000px) {
             .student-summary {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -184,7 +177,6 @@
 <body>
     <div class="app-container">
 
-        <!-- Sidebar navigation -->
         <aside class="sidebar">
             <div class="brand">
                 <h2>Placement <span>Analytics</span></h2>
@@ -205,13 +197,11 @@
             </div>
         </aside>
 
-        <!-- Main content -->
         <main class="main-content student-container">
 
             <h1>Student Management</h1>
             <p>Add, view, edit, and delete student records.</p>
 
-            <!-- Summary cards -->
             <div class="student-summary">
                 <div class="summary-card">
                     <h3>Total Students</h3>
@@ -236,7 +226,6 @@
 
             <p id="studentMessage" role="status" aria-live="polite"></p>
 
-            <!-- Add and edit student form -->
             <h2 id="formTitle">Add New Student</h2>
 
             <form id="studentForm" class="student-form">
@@ -281,7 +270,6 @@
                 </button>
             </form>
 
-            <!-- Student records and filters -->
             <h2>Student Records</h2>
 
             <div class="student-search">
@@ -326,10 +314,74 @@
                 </table>
             </div>
 
-        </main>
-    </div>
+            <!-- Manage optional student details -->
+            <section id="manageDetailsSection" hidden>
+                <h2>Manage Student Details</h2>
 
-    <script>
+                <p id="selectedStudentInfo"></p>
+
+                <h3>Student Skills (Optional)</h3>
+
+                <form id="studentSkillsForm">
+                    <div id="availableSkills">
+                        Loading available skills...
+                    </div>
+
+                    <button type="submit">Save Skills</button>
+                </form>
+
+                <h3>Placement Details (Optional)</h3>
+
+                <form id="studentPlacementForm">
+                    <input
+                        type="text"
+                        id="placementCompany"
+                        placeholder="Company Name"
+                        maxlength="100"
+                        required
+                    >
+
+                    <input
+                        type="text"
+                        id="placementRole"
+                        placeholder="Job Role"
+                        maxlength="100"
+                        required
+                    >
+
+                    <input
+                        type="number"
+                        id="placementPackage"
+                        placeholder="Package (LPA, optional)"
+                        min="0"
+                        step="0.01"
+                    >
+
+                    <input type="date" id="placementDate">
+
+                    <select id="placementStatus" required>
+                        <option value="">Select Placement Status</option>
+                        <option value="Placed">Placed</option>
+                    </select>
+
+                    <button type="submit">Save Placement</button>
+                </form>
+
+                <h3>Saved Placement Details</h3>
+
+<div id="savedPlacementDetails">
+    No placement details loaded.
+</div>
+
+<button type="button" id="closeManageDetails">
+    Close
+</button>
+</section>
+
+</main>
+</div>
+
+<script>
         const API_URL = "http://127.0.0.1:5000/api/students";
 
         const studentForm = document.getElementById("studentForm");
@@ -355,11 +407,229 @@
 
         let editingStudentId = null;
         let students = [];
+        let activeStudentId = null;
 
         function showMessage(text, isError = false) {
             message.textContent = text;
             message.style.color = isError ? "#dc2626" : "#15803d";
         }
+
+        async function openManageDetails(student) {
+            activeStudentId = student.student_id;
+
+            document.getElementById("manageDetailsSection").hidden = false;
+
+            document.getElementById("selectedStudentInfo").textContent =
+                "Student ID: " + student.student_id +
+                " | Roll Number: " + student.roll_no +
+                " | Department: " + student.department;
+
+            const skillsContainer = document.getElementById("availableSkills");
+            skillsContainer.textContent = "Loading available skills...";
+
+            // Reset placement fields when opening a different student.
+            document.getElementById("studentPlacementForm").reset();
+
+            try {
+                const [skillsResponse, savedSkillsResponse] = await Promise.all([
+                    fetch("http://127.0.0.1:5000/api/available-skills"),
+                    fetch(`http://127.0.0.1:5000/api/students/${student.student_id}/skills`)
+                ]);
+
+                if (!skillsResponse.ok || !savedSkillsResponse.ok) {
+                    throw new Error("Could not load student skills.");
+                }
+
+                const skillsResult = await skillsResponse.json();
+                const savedSkillsResult = await savedSkillsResponse.json();
+
+                if (!skillsResult.success || !savedSkillsResult.success) {
+                    throw new Error("Could not load student skills.");
+                }
+
+                const skills = skillsResult.data;
+                const savedSkillIds = new Set(
+                    savedSkillsResult.data.map(skill => Number(skill.skill_id))
+                );
+
+                skillsContainer.replaceChildren();
+
+                skills.forEach(skill => {
+                    const label = document.createElement("label");
+                    const checkbox = document.createElement("input");
+
+                    checkbox.type = "checkbox";
+                    checkbox.name = "skill_ids";
+                    checkbox.value = skill.skill_id;
+                    checkbox.checked = savedSkillIds.has(Number(skill.skill_id));
+
+                    label.append(
+                        checkbox,
+                        document.createTextNode(" " + skill.skill_name)
+                    );
+
+                    skillsContainer.appendChild(label);
+                    skillsContainer.appendChild(document.createElement("br"));
+                });
+            } catch (error) {
+                skillsContainer.textContent =
+                    "Unable to load skills. Please check whether Flask is running.";
+                console.error(error);
+            }
+
+            // Load saved placement details
+const placementContainer = document.getElementById("savedPlacementDetails");
+placementContainer.textContent = "Loading placement details...";
+
+try {
+    const response = await fetch(
+        `http://127.0.0.1:5000/api/students/${student.student_id}/placement`
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+        throw new Error(result.error || "Could not load placement details.");
+    }
+
+    placementContainer.replaceChildren();
+
+    if (!result.data) {
+        placementContainer.textContent = "No placement details saved yet.";
+    } else {
+        const placement = result.data;
+
+        const details = [
+            ["Company", placement.company],
+            ["Job Role", placement.job_role],
+            [
+                "Package",
+                placement.package_lpa == null
+                    ? "Not provided"
+                    : placement.package_lpa + " LPA"
+            ],
+            ["Placement Date", placement.placement_date || "Not provided"],
+            ["Status", placement.status]
+        ];
+
+        details.forEach(([label, value]) => {
+            const paragraph = document.createElement("p");
+            const strong = document.createElement("strong");
+
+            strong.textContent = label + ": ";
+            paragraph.append(strong, document.createTextNode(String(value)));
+            placementContainer.appendChild(paragraph);
+        });
+    }
+} catch (error) {
+    placementContainer.textContent = "Unable to load placement details.";
+    console.error(error);
+}
+
+            // IMPORTANT: Do not reset studentSkillsForm here.
+            // Resetting it after loading the checkboxes would uncheck saved skills.
+
+            document.getElementById("manageDetailsSection").scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+
+        document.getElementById("studentSkillsForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            if (activeStudentId === null) {
+                alert("Please select a student first.");
+                return;
+            }
+
+            const skillIds = Array.from(
+                document.querySelectorAll(
+                    '#availableSkills input[name="skill_ids"]:checked'
+                )
+            ).map(checkbox => Number(checkbox.value));
+
+            try {
+                const response = await fetch(
+                    `http://127.0.0.1:5000/api/students/${activeStudentId}/skills`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            skill_ids: skillIds
+                        })
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || "Could not save skills.");
+                }
+
+                alert("Skills saved successfully!");
+            } catch (error) {
+                alert(error.message);
+                console.error(error);
+            }
+        });
+
+        document.getElementById("studentPlacementForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            if (activeStudentId === null) {
+                alert("Please select a student first.");
+                return;
+            }
+
+            const company = document.getElementById("placementCompany").value.trim();
+            const role = document.getElementById("placementRole").value.trim();
+            const packageValue = document.getElementById("placementPackage").value;
+            const placementDate = document.getElementById("placementDate").value;
+            const status = document.getElementById("placementStatus").value;
+
+            const placementData = {
+                company: company,
+                job_role: role,
+                status: status,
+                package_lpa: packageValue === "" ? null : Number(packageValue),
+                placement_date: placementDate === "" ? null : placementDate
+            };
+
+            try {
+                const response = await fetch(
+                    `http://127.0.0.1:5000/api/students/${activeStudentId}/placement`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(placementData)
+                    }
+                );
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(
+                        result.error || "Could not save placement details."
+                    );
+                }
+
+                alert("Placement details saved successfully!");
+                document.getElementById("studentPlacementForm").reset();
+            } catch (error) {
+                alert(error.message);
+                console.error(error);
+            }
+        });
+
+        document.getElementById("closeManageDetails").addEventListener("click", function () {
+            document.getElementById("manageDetailsSection").hidden = true;
+            activeStudentId = null;
+        });
 
         async function loadStudents() {
             try {
@@ -374,11 +644,8 @@
 
                 students = result.data;
                 renderStudents();
-
             } catch (error) {
-                studentCount.textContent =
-                    "Unable to load student records.";
-
+                studentCount.textContent = "Unable to load student records.";
                 tableBody.replaceChildren();
 
                 const row = document.createElement("tr");
@@ -397,23 +664,17 @@
         function renderStudents() {
             tableBody.replaceChildren();
 
-            const searchText =
-                searchInput.value.trim().toLowerCase();
-
+            const searchText = searchInput.value.trim().toLowerCase();
             const selectedDepartment = departmentFilter.value;
 
-            // Apply search and department filters
             const filteredStudents = students.filter(student =>
-                String(student.roll_no)
-                    .toLowerCase()
-                    .includes(searchText) &&
+                String(student.roll_no).toLowerCase().includes(searchText) &&
                 (
                     selectedDepartment === "" ||
                     student.department === selectedDepartment
                 )
             );
 
-            // Calculate summary values from all student records
             const departments = new Set(
                 students.map(student => student.department)
             );
@@ -423,7 +684,6 @@
             );
 
             totalStudentsCard.textContent = students.length;
-
             totalDepartmentsCard.textContent = departments.size;
 
             graduationYearCard.textContent =
@@ -433,8 +693,7 @@
                         .sort((a, b) => Number(a) - Number(b))
                         .join(", ");
 
-            filteredStudentsCard.textContent =
-                filteredStudents.length;
+            filteredStudentsCard.textContent = filteredStudents.length;
 
             studentCount.textContent =
                 `Showing ${filteredStudents.length} of ${students.length} students`;
@@ -448,11 +707,9 @@
 
                 row.appendChild(cell);
                 tableBody.appendChild(row);
-
                 return;
             }
 
-            // Display matching student records
             filteredStudents.forEach(student => {
                 const row = document.createElement("tr");
 
@@ -473,7 +730,6 @@
                 editButton.textContent = "Edit";
                 editButton.className = "edit-button";
                 editButton.type = "button";
-
                 editButton.addEventListener("click", () => {
                     editStudent(student);
                 });
@@ -482,23 +738,26 @@
                 deleteButton.textContent = "Delete";
                 deleteButton.className = "delete-button";
                 deleteButton.type = "button";
-
                 deleteButton.addEventListener("click", () => {
                     deleteStudent(student);
                 });
 
-                actionsCell.append(editButton, deleteButton);
+                const manageButton = document.createElement("button");
+                manageButton.textContent = "Manage Details";
+                manageButton.type = "button";
+                manageButton.addEventListener("click", () => {
+                    openManageDetails(student);
+                });
+
+                actionsCell.append(editButton, deleteButton, manageButton);
                 row.appendChild(actionsCell);
                 tableBody.appendChild(row);
             });
         }
 
-        // Update results when search or department changes
         searchInput.addEventListener("input", renderStudents);
-
         departmentFilter.addEventListener("change", renderStudents);
 
-        // Add or update a student
         studentForm.addEventListener("submit", async event => {
             event.preventDefault();
 
@@ -537,13 +796,11 @@
 
                 resetForm();
                 await loadStudents();
-
             } catch (error) {
                 showMessage(error.message, true);
             }
         });
 
-        // Load a student into the form for editing
         function editStudent(student) {
             editingStudentId = student.student_id;
 
@@ -560,7 +817,6 @@
             });
         }
 
-        // Delete a student
         async function deleteStudent(student) {
             const confirmed = confirm(
                 `Delete student ${student.roll_no}?\nThis cannot be undone.`
@@ -588,13 +844,11 @@
 
                 showMessage(result.message);
                 await loadStudents();
-
             } catch (error) {
                 showMessage(error.message, true);
             }
         }
 
-        // Reset the form
         function resetForm() {
             editingStudentId = null;
 
@@ -608,7 +862,6 @@
 
         cancelButton.addEventListener("click", resetForm);
 
-        // Load records when the page opens
         loadStudents();
     </script>
 </body>
