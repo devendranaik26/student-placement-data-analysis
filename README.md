@@ -1,18 +1,17 @@
-
 # Student Placement Data Analysis System
 
 ## Project Overview
 
 The Student Placement Data Analysis System analyzes student placement outcomes, department-wise placement rates, salary packages, company recruitment, and technical skill demand.
 
-The project uses MySQL for data storage, Python for data analysis, Pandas and NumPy for data processing, Flask for the backend APIs, and HTML, CSS, JavaScript, and Chart.js for the interactive web dashboard.
+The project uses MySQL for data storage, Python for data analysis, Pandas and NumPy for data processing, Flask for backend APIs, and HTML, CSS, JavaScript, and Chart.js for the interactive web dashboard.
 
 The system provides five dashboard pages with summary cards and charts to help users understand placement trends and compare departments, companies, packages, and technical skills.
 
 ## Features
 
 - Department-wise placement rate analysis.
-- Comparison of total students and placed students across departments.
+- Comparison of total students, placed students, and not-placed students across departments.
 - Average, highest, and lowest salary package summaries.
 - Package distribution and department-wise package comparison.
 - Company-wise placement statistics.
@@ -21,11 +20,13 @@ The system provides five dashboard pages with summary cards and charts to help u
 - Flask APIs that provide data to the frontend.
 - MySQL database integration.
 - Aggregate reporting designed to avoid exposing private student information.
+- Student management, skills management, and placement management.
+- Single-command startup for the Flask backend and frontend server.
 
 ## Technologies Used
 
 - **MySQL:** Stores student, skill, and placement data.
-- **Python:** Implements the analysis logic.
+- **Python:** Implements the analysis logic and startup script.
 - **Pandas:** Processes and analyzes tabular data.
 - **NumPy:** Supports numerical calculations.
 - **mysql-connector-python:** Connects Python to MySQL.
@@ -33,7 +34,7 @@ The system provides five dashboard pages with summary cards and charts to help u
 - **Flask:** Provides backend routes and REST API endpoints.
 - **HTML:** Structures the dashboard pages.
 - **CSS:** Styles the dashboard interface.
-- **JavaScript:** Connects the frontend to the backend APIs.
+- **JavaScript:** Connects the frontend to backend APIs.
 - **Chart.js:** Creates interactive dashboard charts.
 - **Matplotlib:** Supports Python-based data visualization where applicable.
 - **Git and GitHub:** Support version control and team collaboration.
@@ -62,6 +63,7 @@ student-placement-data-analysis/
 │   ├── css/
 │   └── js/
 ├── visualization/
+├── run_project.py
 ├── .gitignore
 ├── requirements.txt
 └── README.md
@@ -101,51 +103,48 @@ pip install -r requirements.txt
 Alternatively, install the core analysis dependencies:
 
 ```bash
-pip install pandas numpy mysql-connector-python python-dotenv
+pip install pandas numpy mysql-connector-python python-dotenv flask
 ```
 
-Flask and any other dependencies used by the application should also be included in `requirements.txt`.
+## Run the Project
 
-## Run the Python Analysis
+The project includes a startup script named `run_project.py`.
 
-From the project root, run:
+This script starts both the Flask backend and frontend server automatically.
+
+From the project root directory, execute:
+
+```bash
+python run_project.py
+```
+
+The script will:
+
+1. Start the Flask backend.
+2. Start the frontend HTTP server.
+3. Open the application in your default browser.
+
+Open the application at:
+
+```text
+http://127.0.0.1:8000/html/students.html
+```
+
+Keep the terminal running while using the application.
+
+Press `Ctrl + C` in the terminal to stop the servers.
+
+**Note:** Make sure MySQL Server is running and your `.env` configuration is correct before starting the application.
+
+## Run the Python Analysis Separately
+
+To execute the Python data analysis modules independently, run:
 
 ```bash
 python -m analysis.main
 ```
 
 This runs the analysis modules for departments, packages, companies, and technical skills, provided the database configuration and required tables are available.
-
-## Run the Flask Backend
-
-Open a terminal in the project root and run:
-
-```bash
-python -m flask --app flask_app.app run --debug
-```
-
-The Flask server will normally be available at:
-
-```text
-http://127.0.0.1:5000
-```
-
-Keep this terminal running while using the frontend.
-
-## Run the Frontend
-
-Open a second terminal and run:
-
-```bash
-cd frontend
-python -m http.server 8000
-```
-
-Open the dashboard in your browser:
-
-```text
-http://127.0.0.1:8000/html/dashboard.html
-```
 
 ## Dashboard Pages
 
